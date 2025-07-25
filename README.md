@@ -32,7 +32,7 @@ Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyum
 
 - **Backend:** Node.js (Express)
 - **Veri Saklama:** JSON dosyaları ile dosya tabanlı kayıt
-- **Frontend:** HTML, TailwindCSS, vanilla JS (saf JavaScript)
+- **Frontend:** HTML, TailwindCSS, vanilla JS 
 - **Paketler:** bcrypt, jsonwebtoken, multer, cors, body-parser
 - **Mobil Uyum:** Tüm arayüzler tam responsive
 
@@ -42,19 +42,14 @@ Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyum
 2. Ana dizinde terminal açın:
    ```bash
    npm install
-   npm startarayıcıda açın:
+   npm start
+   node server.js
 
 Personel Girişi: http://localhost:3000/personel
 
 Admin Girişi: http://localhost:3000/
-| Personel Paneli (Mobil)                | Admin Paneli (Masaüstü)            |
-
-
-| -------------------------------------- | ---------------------------------- |
-| ![Personel](./docs/personel-mobil.png) | ![Admin](./docs/admin-desktop.png) |
-
-
-
+          
+![Personel](./docs/personel-mobil.png) | ![Admin](./docs/admin-desktop.png) 
 
 Katkı ve Lisans
 Kod tamamen geliştiriciye aittir, isteğe göre uyarlanabilir.
