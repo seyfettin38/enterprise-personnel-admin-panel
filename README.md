@@ -2,9 +2,7 @@
 
 Modern, kurumsal şirketler için geliştirilmiş **personel ve yönetici paneli**.  
 Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyumlu) ve gerçek kurumsal ihtiyaçlara göre tasarlanmıştır.
-
 ## Özellikler
-
 - **Personel Portalı:**
   - Üretim kartı başlatma, üretim adedi ve açıklama girme
   - Canlı süre ve mola yönetimi
@@ -22,8 +20,8 @@ Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyum
   - Üretim raporları ve verimlilik analizi
   - Duyuru ekleme, görsel/video ile paylaşım
   - İletişim kutusu (görüş/öneri/şikayet okuma)
-
-- **Güvenlik:**
+  - 
+ - **Güvenlik:**
   - JWT tabanlı kimlik doğrulama
   - Yetki kontrolleri (personel/admin)
   - Kullanıcı işlemleri tamamen API üzerinden
@@ -41,14 +39,16 @@ Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyum
 1. **Proje dosyalarını klonlayın veya indirin**
 2. Ana dizinde terminal açın:
    ```bash
+    
    npm install
    npm start
    node server.js
 
-Personel Girişi: http://localhost:3000/personel
-
-Admin Girişi: http://localhost:3000/
-          
+Personel Girişi:
+http://localhost:3000/personel
+Admin Girişi:
+http://localhost:3000/
+//ekran görüntüleri           
 ![Personel](./docs/personel-mobil.png) | ![Admin](./docs/admin-desktop.png) 
 
 Katkı ve Lisans
