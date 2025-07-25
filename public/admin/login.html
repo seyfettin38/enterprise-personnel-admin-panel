@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fotonik Yönetim Paneli – Giriş</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: #234060;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-card {
+      background: linear-gradient(120deg, #234060 100%);
+      border-radius: 1.2rem;
+      box-shadow: 0 8px 44px #00284918, 0 2px 10px #0001;
+      padding: 2.6rem 2.2rem 2.2rem 2.2rem;
+      max-width: 410px;
+      width: 100%;
+      text-align: center;
+      
+    }
+    @keyframes pop-in {
+      0% { opacity: 0; transform: scale(.93) translateY(70px);}
+      100%{ opacity: 1; transform: none;}
+    }
+    .fotonik-logo-img {
+      width: 200px;
+      margin: 0 auto 1.1rem auto;
+      display: block;
+      filter: drop-shadow(0 2px 16px #76bee719);
+      user-drag: none; user-select: none;
+    }
+    .panel-title {
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.014em;
+      margin-bottom: 1.5rem;
+      text-shadow: 0 2px 20px #466bc245;
+    }
+    .admin-btn {
+      background: linear-gradient(90deg, #1467b0 0%, #3cc5fa 100%);
+      color: #fff;
+      font-weight: 700;
+      border-radius: .85rem;
+      font-size: 1.11rem;
+      padding: .7rem 0;
+      box-shadow: 0 2px 14px #33adfd22;
+      margin-top: .5rem;
+      border: none;
+      outline: none;
+      transition: all .14s;
+    }
+    .admin-btn:hover {
+      background: linear-gradient(90deg, #3cc5fa 0%, #1467b0 100%);
+      scale: 1.03;
+      box-shadow: 0 7px 28px #33cafd33;
+    }
+    .admin-input {
+      background: #e7f1fb;
+      border: 1.5px solid #b4d7f7;
+      outline: none;
+      font-size: 1.09rem;
+      color: #113355;
+      transition: border 0.17s, box-shadow 0.13s;
+      box-shadow: 0 1px 6px #1ba4fc10;
+      border-radius: .7rem;
+      padding: 0.7rem 1rem;
+    }
+    .admin-input:focus {
+      border: 2px solid #3cc5fa;
+      background: #fff;
+      box-shadow: 0 2px 12px #26a4f21b;
+    }
+    ::placeholder { color: #375d8c; opacity: .93;}
+    @media (max-width:600px) {
+      .login-card { padding: 1.1rem .15rem 1.1rem .15rem; border-radius: .7rem; }
+      .fotonik-logo-img { width: 82px; }
+      .panel-title { font-size: 1.06rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+
+    <!-- LOGO -->
+    <img src="/uploads/fotonik-logo.png" class="fotonik-logo-img" alt="Fotonik Logo" draggable="false"/>
+
+    <!-- BAŞLIK -->
+    <div class="panel-title">Yönetim Paneli</div>
+
+    <!-- FORM -->
+    <form id="loginForm" class="w-full mt-2 space-y-5">
+      <input type="text" id="username" class="admin-input w-full" placeholder="Kullanıcı Adı" required>
+      <input type="password" id="password" class="admin-input w-full" placeholder="Şifre" required>
+      <button type="submit" class="w-full admin-btn">Giriş Yap</button>
+    </form>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      if (!username || !password) return alert('Tüm alanları doldurun.');
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, password })
+      });
+      if (res.ok) {
+        const { token } = await res.json();
+        localStorage.setItem('token', token);
+        window.location.href = '/admin';
+      } else {
+        alert('Kullanıcı adı veya şifre hatalı.');
+      }
+    });
+  </script>
+</body>
+</html>

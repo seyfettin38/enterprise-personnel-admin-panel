@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fotonik Personel Portalı</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --main: #154373;
+      --main-dark: #0e2a47;
+      --main-light: #eaf3fb;
+      --accent: #25b2ef;
+      --gray: #f7fafd;
+      --shadow: 0 4px 32px #25b2ef13;
+      --radius: 1.35rem;
+    }
+    body { background: var(--gray); }
+    /* SIDEBAR */
+    .sidebar {
+      width: 245px; min-width: 200px; background: #fff;
+      border-right: 1.5px solid #e3e9f2;
+      box-shadow: 0 0 60px #25b2ef13;
+      display: flex; flex-direction: column; z-index: 30;
+      transition: left .18s;
+      position: relative;
+    }
+    .sidebar .logo { padding: 2.1rem 0 1.1rem 0; text-align: center;}
+    .sidebar .logo img { width: 135px; margin: 0 auto; }
+    .side-menu-btn {
+      width: 100%; padding: 15px 24px; border-radius: 1rem;
+      font-size: 1.13rem; font-weight: 600; letter-spacing:.02em;
+      color: var(--main-dark); background: none; outline: none; border: none;
+      margin-bottom: 7px;
+      transition: all .14s; text-align: left; display: flex; align-items: center; gap: 12px;
+    }
+    .side-menu-btn.active, .side-menu-btn:hover {
+      background: #e7f5fe;
+      color: var(--main);
+      box-shadow: 0 2px 14px #25b2ef0a;
+    }
+    .sidebar .logout-btn {
+      background: linear-gradient(90deg, #154373 0%, #25b2ef 100%);
+      color: #fff; font-weight: 700;
+      border-radius: 0.9rem; font-size: 1.13rem;
+      padding: .93rem 0; box-shadow: 0 2px 10px #25b2ef13;
+      margin-top: 12px;
+      border: none; outline: none; transition: all .14s;
+    }
+    .sidebar .logout-btn:hover {
+      background: linear-gradient(90deg, #25b2ef 0%, #154373 100%);
+      box-shadow: 0 7px 28px #25b2ef32;
+    }
+    /* HAMBURGER (MOBİL) */
+    .hamburger { display:none; position:absolute; left:18px; top:25px; z-index:100;}
+    .hamburger span {
+      display:block; width:32px; height:4px; background:var(--main-dark);
+      border-radius:3px; margin-bottom:7px; transition:.19s;}
+    /* MAIN CONTENT */
+    .main-content { flex:1 1 0%; min-width:0; background: var(--gray);}
+    .main-inner { width:100%; max-width:850px; margin:0 auto; padding:2.5rem 1rem 2rem 1rem; }
+    .page-header {
+      font-size: 2.1rem; font-weight: 900;
+      color: var(--main-dark); text-align: center;
+      letter-spacing:.013em; margin-bottom: 1.3rem;
+      text-shadow:0 2px 20px #7cd1ff2b;
+    }
+    .welcome-banner {
+      background:linear-gradient(90deg,#e7f5fe 75%,#d1eafc 100%);
+      border-radius: 1.2rem; box-shadow: 0 4px 24px #25b2ef09;
+      padding: 1.05rem 1.3rem; font-size: 1.28rem; font-weight: 700;
+      color: var(--main-dark); text-align: center; margin-bottom: 1.45rem;
+      border: 1.5px solid #bae9fd;
+    }
+    .page-section {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 2rem 2.1rem 1.6rem 2.1rem;
+      margin-bottom: 0.7rem;
+      min-height: 210px;
+    }
+    .fotonik-card {
+      background: #fafdff; border-radius: 1rem;
+      box-shadow: var(--shadow);
+      padding: 1.1rem 1.3rem; margin-bottom: 1.1rem; border: 1.5px solid #e5eaf2;
+      transition: box-shadow .12s, transform .10s;
+    }
+    .fotonik-card:hover { box-shadow: 0 10px 32px #25b2ef14; transform: translateY(-1px) scale(1.01);}
+    .fotonik-btn {
+      background: linear-gradient(90deg, #154373 0%, #25b2ef 100%);
+      color: #fff; font-weight: 700;
+      border-radius: 0.9rem; font-size: 1.08rem;
+      padding: .72rem 0;
+      box-shadow: 0 2px 12px #25b2ef13;
+      border: none; outline: none; transition:all .12s;
+    }
+    .fotonik-btn:hover {background: linear-gradient(90deg, #25b2ef 0%, #154373 100%);}
+    .fotonik-input {
+      background: #f5faff; border: 1.5px solid #b4d7f7; outline: none;
+      font-size: 1.08rem; color: #153054;
+      transition: border 0.13s, box-shadow 0.10s;
+      box-shadow: 0 1px 6px #25b2ef13;
+      padding: 0.67rem 1.1rem; border-radius: .8rem;
+    }
+    .fotonik-input:focus {
+      border: 2px solid #154373; background: #fff;
+      box-shadow: 0 2px 13px #25b2ef12;
+    }
+    .fotonik-table th { color: #154373; font-weight: 700; }
+    /* Responsive */
+    @media (max-width:900px) { .main-inner{max-width:99vw;} }
+    @media (max-width:760px) {
+      .sidebar {position:fixed; left:-310px;top:0;bottom:0;height:100vh; box-shadow:0 0 60px #25b2ef21;}
+      .sidebar.open {left:0;}
+      .hamburger {display:block;}
+      .main-inner {padding:1.12rem .19rem 1.3rem .19rem;}
+      .page-header {font-size:1.14rem;}
+      .page-section {padding:1.03rem .2rem;}
+    }
+  </style>
+</head>
+<body class="flex min-h-screen">
+  <!-- HAMBURGER MENU (Mobile) -->
+  <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebarNav">
+    <div>
+      <div class="logo"><img src="/uploads/fotonik-logo.png" alt="Fotonik Logo"/></div>
+      <nav class="mt-2 flex flex-col gap-1 px-3">
+        <button class="side-menu-btn active" id="btnHome"    onclick="showSection('home')">🏠 Anasayfa</button>
+        <button class="side-menu-btn"        id="btnWork"    onclick="showSection('work')">🔧 Üretim İşleri</button>
+        <button class="side-menu-btn"        id="btnHistory" onclick="showSection('history')">📜 Geçmiş</button>
+        <button class="side-menu-btn"        id="btnIzin"    onclick="showSection('izin')">📝 İzin Talepleri</button>
+        <button class="side-menu-btn"        id="btnDuyuru"  onclick="showSection('duyuru')">📢 Duyurular</button>
+        <button class="side-menu-btn"        id="btnIletisim"onclick="showSection('iletisim')">💬 Görüş/Öneri/Şikayet</button>
+      </nav>
+    </div>
+    <div class="p-5">
+      <button class="logout-btn w-full" onclick="logout()">Çıkış Yap</button>
+    </div>
+  </aside>
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="main-inner">
+      <!-- HOŞGELDİNİZ & ANASAYFA -->
+      <div id="homeSection" class="page-section">
+        <div class="page-header">Personel Portalı</div>
+        <div class="welcome-banner" id="personelBanner"></div>
+        <div class="text-center font-medium text-[#154373] mt-2" style="font-size:1.45rem;line-height:1.9;">
+          “ Bilmek yeterli değildir, uygulamalıyız;<br>
+          <span class="italic font-bold text-[#25b2ef]">İstemek yeterli değildir, yapmalıyız. </span>”
+        </div>
+      </div>
+      <!-- ÜRETİM İŞLERİ -->
+      <div id="workSection" class="page-section hidden">
+        <div class="page-header">Üretim İşleri</div>
+        <div id="activeCards" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        <div id="inProgress" class="hidden fotonik-card mt-4">
+          <div class="font-semibold text-lg mb-1"><span id="jobName"></span></div>
+          <div class="flex items-center gap-2 mb-2"><span>Süre:</span><span id="timer" class="font-mono">00:00:00</span></div>
+          <div class="flex gap-2 mb-4">
+            <button id="btnPause" class="fotonik-btn">Duraklat</button>
+            <button id="btnResume" class="fotonik-btn hidden">Devam Et</button>
+            <button id="btnFinish" class="fotonik-btn bg-[#e30613] hover:bg-[#e33939]">Bitir</button>
+          </div>
+          <div>
+            <input id="qty" type="number" min="1" placeholder="Üretilen Adet" class="fotonik-input w-full mb-2"/>
+            <textarea id="desc" placeholder="Açıklama" class="fotonik-input w-full"></textarea>
+          </div>
+        </div>
+      </div>
+      <!-- GEÇMİŞ ÜRETİM KAYITLARI -->
+      <div id="historySection" class="page-section hidden">
+        <div class="page-header">Geçmiş Kayıtlar</div>
+        <div id="historyList"></div>
+      </div>
+      <!-- İZİN TALEPLERİ -->
+      <div id="izinSection" class="page-section hidden">
+        <div class="page-header">İzin Talepleri</div>
+        <form id="izinForm" class="grid grid-cols-1 md:grid-cols-2 gap-5" enctype="multipart/form-data" onsubmit="sendIzin(event)">
+          <div>
+            <label class="block text-sm font-medium mb-1">İzin Türü</label>
+            <select id="izinTur" class="fotonik-input w-full bg-white"></select>
+            <div id="izinKalan" class="text-xs text-gray-600 mt-1"></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Gerekçe</label>
+            <textarea id="iNeden" placeholder="İzin açıklaması" class="fotonik-input w-full h-16"></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Başlangıç Tarihi</label>
+            <input type="date" id="iBaslangic" class="fotonik-input w-full" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Bitiş Tarihi</label>
+            <input type="date" id="iBitis" class="fotonik-input w-full" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium mb-1">Belge (varsa)</label>
+            <input type="file" id="iBelge" class="fotonik-input w-full" />
+          </div>
+          <div class="col-span-full">
+            <button type="submit" class="fotonik-btn w-full mt-2">Talebi Gönder</button>
+            <div id="izinHata" class="mt-2 text-sm text-red-600 hidden"></div>
+          </div>
+        </form>
+        <div class="mt-8">
+          <div class="text-lg font-semibold mb-2 text-[#154373]">Geçmiş Talepler</div>
+          <div class="overflow-x-auto">
+            <table class="w-full fotonik-table text-left min-w-[400px]">
+              <thead>
+                <tr>
+                  <th>Tarih</th>
+                  <th>İzin Türü</th>
+                  <th>Açıklama</th>
+                  <th>Süre</th>
+                  <th>Belge</th>
+                  <th>Durum</th>
+                </tr>
+              </thead>
+              <tbody id="izinList"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- DUYURULAR -->
+      <div id="duyuruSection" class="page-section hidden">
+        <div class="page-header">Duyurular</div>
+        <div id="duyuruList" class="mt-3"></div>
+      </div>
+      <!-- GÖRÜŞ/ÖNERİ/ŞİKAYET -->
+      <div id="iletisimSection" class="page-section hidden">
+        <div class="page-header">Görüş / Öneri / Şikayet</div>
+        <form id="iletisimForm" onsubmit="gonderIletisim(event)">
+          <div class="mb-2">
+            <label class="block mb-1 font-medium">Tür</label>
+            <select id="iletisimTur" class="fotonik-input w-full mb-3">
+              <option value="">Seçiniz</option>
+              <option>Görüş</option>
+              <option>Öneri</option>
+              <option>Şikayet</option>
+            </select>
+          </div>
+          <div class="mb-2">
+            <label class="block mb-1 font-medium">Mesajınız</label>
+            <textarea id="iletisimMesaj" class="fotonik-input w-full h-24"></textarea>
+          </div>
+          <button type="submit" class="fotonik-btn w-full">Gönder</button>
+          <div id="iletisimSonuc" class="mt-2 text-green-600 hidden"></div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script>
+/* ========== GENEL ========== */
+function $(id){ return document.getElementById(id); }
+const sections = ['home','work','history','izin','duyuru','iletisim'];
+function capitalize(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// Hamburger Menü (mobile)
+function toggleSidebar(){
+  $('sidebarNav').classList.toggle('open');
+}
+document.querySelectorAll('.side-menu-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{$('sidebarNav').classList.remove("open");});
+});
+
+// Aktif menüyü ayarla ve sekmeler arası geçiş
+function showSection(id) {
+  sections.forEach(sec=>{
+    $(sec+'Section').classList.add('hidden');
+    $('btn'+capitalize(sec)).classList.remove('active');
+  });
+  $(id+'Section').classList.remove('hidden');
+  $('btn'+capitalize(id)).classList.add('active');
+  setHosgeldinIfHome(id);
+  if(id==="izin")   { fillIzinTurleri(); loadIzinList(); }
+  if(id==="work")   { loadActiveCards(); restoreJob(); }
+  if(id==="history"){ loadHistory(); }
+  if(id==="duyuru") loadDuyuruList();
+}
+function logout(){
+  localStorage.removeItem('personelToken');
+  location.href = 'login.html';
+}
+const token = localStorage.getItem('personelToken');
+if (!token) location.href = 'login.html';
+
+/* Hoşgeldiniz Bannerı */
+function getAdSoyadFromToken() {
+  try {
+    const token = localStorage.getItem('personelToken');
+    if (!token) return "";
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    const payload = JSON.parse(jsonPayload);
+    return [payload.ad, payload.soyad, payload.personelAd].filter(Boolean).join(' ');
+  } catch (e) { return ""; }
+}
+function setHosgeldinIfHome(activeSection) {
+  var banner = $('personelBanner');
+  if (activeSection === 'home') {
+    const personelAd = getAdSoyadFromToken();
+    banner.style.display = "block";
+    banner.textContent = personelAd ? `Hoş geldiniz, ${personelAd}!` : "";
+  } else {
+    banner.style.display = "none";
+  }
+}
+
+/* ========== ÜRETİM MODÜLÜ ========== */
+let currentJob = null, elapsed = 0, timerInt = null, currentUserId = null;
+function formatTime(sec){
+  const h = String(Math.floor(sec/3600)).padStart(2,'0');
+  const m = String(Math.floor((sec%3600)/60)).padStart(2,'0');
+  const s = String(sec%60).padStart(2,'0');
+  return `${h}:${m}:${s}`;
+}
+function startTimer(){
+  if(timerInt) return;
+  timerInt = setInterval(()=>{
+    $("timer").innerText = formatTime(++elapsed);
+  },1000);
+}
+function stopTimer(){
+  clearInterval(timerInt); timerInt = null;
+}
+async function restoreJob(){
+  const res = await fetch("/api/uretim/personel/inprogress", {headers:{"Authorization":`Bearer ${token}`}});
+  if (res.ok){
+    const job = await res.json();
+    currentJob = job.kartId;
+    elapsed    = Math.floor((Date.now() - job.startTs)/1000);
+    $("jobName").innerText = job.kartAd;
+    $("inProgress").classList.remove("hidden");
+    $("btnPause").classList.remove("hidden");
+    $("btnResume").classList.add("hidden");
+    $("timer").innerText = formatTime(elapsed);
+    startTimer();
+  }
+}
+async function loadActiveCards(){
+  const res = await fetch("/api/uretim/personel/aktif", {headers:{"Authorization":`Bearer ${token}`}});
+  const cards = res.ok?await res.json():[];
+  const out = $("activeCards");
+  out.innerHTML = "";
+  cards.forEach(k=>{
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `
+      <h4 class="font-semibold mb-1">${k.ad}</h4>
+      <p class="text-sm text-gray-600 mb-2">Hedef: ${k.hedef}</p>
+      <button class="btn-primary btn w-full"
+              onclick="startJob('${k.id}','${k.ad}')">Başlat</button>`;
+    out.appendChild(div);
+  });
+}
+window.startJob = async (id,name)=>{
+  if (currentJob) { return alert("Önceki işi bitirin, yeni bir işe başlayamazsınız."); }
+  const res = await fetch("/api/uretim/personel/baslat", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${token}` },
+    body: JSON.stringify({ kartId:id })
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    return alert("Başlatma hatası: "+(e.hata||res.status));
+  }
+  currentJob = id; elapsed = 0;
+  $("jobName").innerText = name;
+  $("inProgress").classList.remove("hidden");
+  $("btnPause").classList.remove("hidden");
+  $("btnResume").classList.add("hidden");
+  $("timer").innerText = "00:00:00";
+  startTimer();
+};
+$("btnPause").onclick = ()=>{
+  stopTimer();
+  $("btnPause").classList.add("hidden");
+  $("btnResume").classList.remove("hidden");
+};
+$("btnResume").onclick = ()=>{
+  startTimer();
+  $("btnResume").classList.add("hidden");
+  $("btnPause").classList.remove("hidden");
+};
+$("btnFinish").onclick = async ()=>{
+  if(!currentJob) return alert("Aktif iş yok");
+  stopTimer();
+  const adet = +$("qty").value;
+  if(!adet) return alert("Lütfen adet girin");
+  const ac   = $("desc").value.trim();
+  const res  = await fetch("/api/uretim/personel/kayit", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "Authorization":`Bearer ${token}` },
+    body: JSON.stringify({ kartId: currentJob, adet, aciklama:ac })
+  });
+  if(!res.ok){
+    const e=await res.json().catch(()=>({}));
+    return alert("Kayıt hatası: "+(e.hata||res.status));
+  }
+  alert("Kaydedildi");
+  currentJob = null;
+  $("inProgress").classList.add("hidden");
+  loadActiveCards();
+  loadHistory();
+};
+
+/* ========== GEÇMİŞ ÜRETİM KAYITLARI ========== */
+async function loadHistory(){
+  const res = await fetch("/api/uretim/personel/kayitlar", {headers:{"Authorization":`Bearer ${token}`}});
+  const arr = res.ok?await res.json():[];
+  // verim hesaplama
+  const rates = arr.map(r=>({ ...r, rate: r.sure>0 ? r.adet/r.sure : 0 }));
+  const avg = {};
+  rates.forEach(r=>{
+    avg[r.urun] = avg[r.urun] || { sum:0, count:0 };
+    avg[r.urun].sum += r.rate;
+    avg[r.urun].count++;
+  });
+  Object.keys(avg).forEach(u=> avg[u] = avg[u].sum/avg[u].count);
+
+  const out = $("historyList");
+  out.innerHTML = "";
+  rates.forEach(r=>{
+    const verim = avg[r.urun]>0 ? Math.round((r.rate/avg[r.urun])*100) : 0;
+    const d = document.createElement("div");
+    d.className = "card";
+    d.innerHTML = `
+      <p><strong>Ürün:</strong> ${r.kartAd}</p>
+      <p><strong>Adet:</strong> ${r.adet} | <strong>Süre:</strong> ${r.sure} dk 
+      <p><strong>Açıklama:</strong> ${r.aciklama||'-'}</p>
+      <p class="text-xs text-gray-500 mt-1">${new Date(r.tarih).toLocaleString()}</p>`;
+    out.appendChild(d);
+  });
+}
+
+/* ========== İZİN MODÜLÜ ========== */
+let izinTurleri = [
+  { key: "yillik",    ad: "Yıllık Ücretli İzin", toplam: 14 },
+  { key: "ucretsiz",  ad: "Ücretsiz İzin",      toplam: 30 },
+  { key: "mazeret",   ad: "Mazeret İzni",       toplam: 7 },
+  { key: "rapor",     ad: "Sağlık Raporu",      toplam: 20 }
+];
+async function fillIzinTurleri() {
+  const res = await fetch('/api/izin/kalan', { headers: {'Authorization':'Bearer '+token } });
+  const kalan = await res.json();
+  const sel = $('izinTur');
+  sel.innerHTML = `<option value="">Lütfen seçiniz</option>`;
+  izinTurleri.forEach(tur => {
+    sel.append(new Option(
+      `${tur.ad} (Kalan: ${kalan[tur.ad]||tur.toplam} gün)`, 
+      tur.key
+    ));
+  });
+}
+async function sendIzin(e){
+  e.preventDefault();
+  let tur = $('izinTur').value;
+  let neden = $('iNeden').value.trim();
+  let bas   = $('iBaslangic').value;
+  let bit   = $('iBitis').value;
+  let belge = $('iBelge').files[0];
+  let hataEl = $('izinHata');
+  hataEl.classList.add('hidden');
+  if (!tur||!neden||!bas||!bit) {
+    hataEl.textContent = "Lütfen tüm alanları doldurun."; hataEl.classList.remove('hidden'); return;
+  }
+  const fd = new FormData();
+  fd.append('tur', tur);
+  fd.append('neden', neden);
+  fd.append('baslangic', bas);
+  fd.append('bitis', bit);
+  if(belge) fd.append('belge', belge);
+  const res = await fetch('/api/izin', {
+    method: 'POST',
+    headers: {'Authorization':'Bearer '+token },
+    body: fd
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(()=>({message:"Hata"}));
+    hataEl.textContent = err.message || "Hata oluştu."; hataEl.classList.remove('hidden'); return;
+  }
+  $('izinForm').reset();
+  loadIzinList();
+}
+async function loadIzinList(){
+  // Kendi id'mizi çekiyoruz (kullanıcıya ait kayıtları göstermek için)
+  if(!currentUserId){
+    const u = await fetch('/api/personel/me', {headers: { 'Authorization':'Bearer '+token }}).then(r=>r.json());
+    currentUserId = u.id;
+  }
+  const izinler = await fetch('/api/izin', { headers: { 'Authorization':'Bearer '+token }}).then(r=>r.json());
+  const cont = $('izinList');
+  cont.innerHTML='';
+  izinler.filter(i=>i.personelId===currentUserId)
+    .forEach(i=>{
+      const tur = izinTurleri.find(t=>t.key===i.tur);
+      cont.innerHTML += `
+        <tr>
+          <td class="p-2">${i.baslangic}</td>
+          <td class="p-2">${tur ? tur.ad : i.tur}</td>
+          <td class="p-2">${i.gerekce || i.neden || ''}</td>
+          <td class="p-2">${i.baslangic && i.bitis ? ( (new Date(i.bitis)-new Date(i.baslangic))/(1000*60*60*24)+1 ) : ''}</td>
+          <td class="p-2">${i.belge ? `<a href="/uploads/${i.belge}" target="_blank" class="underline text-blue-500">Görüntüle</a>` : '-'}</td>
+          <td class="p-2 font-semibold">${i.durum||'-'}</td>
+        </tr>
+      `;
+    });
+}
+
+/* ========== DUYURU MODÜLÜ ========== */
+async function loadDuyuruList(){
+  const list = await fetch('/api/duyurular',{ headers:{ 'Authorization':'Bearer '+token }}).then(r=>r.json());
+  const cont = $('duyuruList');
+  cont.innerHTML='';
+  list.forEach(d=>{
+    const div = document.createElement('div');
+    div.className='card';
+    div.innerHTML=`
+      <p class="font-semibold">${d.text}</p>
+      ${d.image?`<img src="/uploads/${d.image}" class="w-full max-h-60 object-cover rounded">`:''}
+      ${d.video?`<video src="/uploads/${d.video}" controls class="w-full rounded"></video>`:''}
+      <p class="text-gray-400 text-xs">${new Date(d.createdAt).toLocaleString()}</p>`;
+    cont.append(div);
+  });
+}
+
+/* ========== GÖRÜŞ/ÖNERİ/ŞİKAYET MODÜLÜ ========== */
+async function gonderIletisim(e){
+  e.preventDefault();
+  let tur = $('iletisimTur').value;
+  let mesaj = $('iletisimMesaj').value.trim();
+  let sonucEl = $('iletisimSonuc');
+  sonucEl.classList.add('hidden');
+  if (!tur || !mesaj) {
+    sonucEl.textContent = "Lütfen tüm alanları doldurun."; 
+    sonucEl.classList.remove('hidden'); sonucEl.classList.remove('text-green-600'); sonucEl.classList.add('text-red-600');
+    return;
+  }
+  const res = await fetch('/api/iletisim', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body: JSON.stringify({tur, mesaj})
+  });
+  if (res.ok) {
+    sonucEl.textContent = "Mesajınız başarıyla gönderildi.";
+    sonucEl.classList.remove('hidden','text-red-600');
+    sonucEl.classList.add('text-green-600');
+    $('iletisimForm').reset();
+  } else {
+    sonucEl.textContent = "Hata oluştu!";
+    sonucEl.classList.remove('hidden','text-green-600');
+    sonucEl.classList.add('text-red-600');
+  }
+}
+
+/* ========== SAYFA YÜKLENİNCE ========== */
+showSection('home');
+  </script>
+</body>
+</html>

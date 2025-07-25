@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1752056148321,
+    "personelId": 1752055895654,
+    "tur": "Adli Sicil Kaydı",
+    "dosya": "1752056148318.png"
+  },
+  {
+    "id": 1752146659809,
+    "personelId": 1752055895654,
+    "tur": "Diploma",
+    "dosya": "1752146659806.xls"
+  },
+  {
+    "id": 1752147783650,
+    "personelId": 1752055895654,
+    "tur": "Diploma",
+    "dosya": "1752147783649.xls"
+  },
+  {
+    "id": 1752147791432,
+    "personelId": 1752055895654,
+    "tur": "Diploma",
+    "dosya": "1752147791431.xls"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  { "key": "yillik",    "ad": "Yıllık Ücretli İzin", "toplam": 14 },
+  { "key": "ucretsiz",  "ad": "Ücretsiz İzin",      "toplam": 30 },
+  { "key": "mazeret",   "ad": "Mazeret İzni",       "toplam": 7 },
+  { "key": "rapor",     "ad": "Sağlık Raporu",      "toplam": 20 }
+  
+]

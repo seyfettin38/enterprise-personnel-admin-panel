@@ -1,0 +1,43 @@
+[
+  {
+    "id": 1752055895654,
+    "ad": "Seyfettin",
+    "soyad": "gök",
+    "email": "syf@gmail.com",
+    "passwordHash": "$2b$10$xUFIaGSLKJPDjK91QGzdtexv68ek5/5Xzf8KSFhAM/ckVhSBqNE3i",
+    "egitim": "LİSANS",
+    "gorev": "YAZILIM",
+    "baslama": "2025-12-05",
+    "foto": "1752056347955.webp"
+  },
+  {
+    "id": 1752218886473,
+    "ad": "Kemal",
+    "soyad": "Borazan",
+    "email": "kemal@gmail.com",
+    "passwordHash": "$2b$10$wkTSvyTbiXId2Wj6MM0y3ehIEzDq/06WqVeOEET2O4hUnMYAg7snC",
+    "egitim": "LİSANS",
+    "gorev": "ÜRETİM",
+    "baslama": "2023-12-12",
+    "foto": "1752219498764.webp"
+  },
+  {
+    "id": 1753445934053,
+    "ad": "Suat",
+    "soyad": "Aslan",
+    "email": "suat@gmail.com",
+    "passwordHash": "$2b$10$KRi3E9ph8xzDEAMOp1gSrOhcqTitn8j6sIL/R5X3iDFFZKDOKxx/.",
+    "egitim": "LİSANS",
+    "gorev": "ÜRETİM MÜDÜRÜ",
+    "baslama": "2017-07-25",
+    "foto": "1753450188469.jpg"
+  },
+  {
+    "id": 1753451942639,
+    "ad": "Celal Şengör",
+    "egitim": "Ön Lisans",
+    "gorev": "Üretim Şefi",
+    "baslama": "1993-07-25",
+    "foto": null
+  }
+]

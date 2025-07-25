@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fotonik Personel Portalı – Giriş</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      min-height: 100vh;
+      /* Çok yumuşak, göz yormayan açık mavi gradyan */
+      background: #001e3c35 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+      letter-spacing: 0.01em;
+    }
+    .login-card {
+      background: rgba(34,54,80,0.94); /* Lacivert fakat yumuşak ve hafif şeffaf */
+      border-radius: 1.5rem;
+      box-shadow: 0 6px 44px #001e3c35;
+      padding: 2.7rem 2.2rem 2.2rem 2.2rem;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      animation: pop-in .45s cubic-bezier(.22,2,.3,1) 1;
+      border: 1.5px solid #72cfff26;
+      backdrop-filter: blur(2.7px) saturate(120%);
+    }
+    @keyframes pop-in {
+      0% { opacity: 0; transform: scale(.95) translateY(64px);}
+      100%{ opacity: 1; transform: none;}
+    }
+    .fotonik-logo-img {
+      width: 300px;
+      max-width: 85vw;
+      margin-bottom: 1.2rem;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      filter: drop-shadow(0 3px 20px #54a7e880);
+      background: transparent;
+      user-select: none;
+      pointer-events: none;
+    }
+    .portal-title {
+      font-size: 1.42rem;
+      font-weight: 900;
+      letter-spacing: 0.012em;
+      margin-bottom: 1.05rem;
+      background: linear-gradient(90deg, #5ed4fc 12%, #2575b6 86%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 2px 14px #146ca92a;
+    }
+    .fotonik-btn {
+      background: linear-gradient(90deg, #45aaff 0%, #71f4ff 100%);
+      color: #fff;
+      font-weight: 700;
+      border-radius: 1rem;
+      font-size: 1.12rem;
+      padding: .8rem 0;
+      box-shadow: 0 2px 14px #045fb61a;
+      border: none;
+      outline: none;
+      margin-top: .4rem;
+      transition: background .13s, box-shadow .12s, scale .13s;
+    }
+    .fotonik-btn:hover {
+      background: linear-gradient(90deg, #4cc2ff 0%, #255688 100%);
+      scale: 1.03;
+      box-shadow: 0 8px 22px #2281b31f;
+      color: #fff;
+    }
+    .fotonik-input {
+      background: #223454ee;
+      border: 1.7px solid #90cdfa;
+      outline: none;
+      font-size: 1.09rem;
+      color: #eaf4fe;
+      transition: border 0.14s, box-shadow 0.13s, background 0.14s;
+      box-shadow: 0 1px 7px #2175c109;
+    }
+    .fotonik-input:focus {
+      border: 2px solid #2bbcff;
+      background: #263d5c;
+      color: #fff;
+      box-shadow: 0 2px 13px #23affd18;
+    }
+    .fotonik-link {
+      color: #70d5fd;
+      text-decoration: underline;
+      font-weight: 600;
+      margin-left: .19em;
+      transition: color .13s;
+    }
+    .fotonik-link:hover { color: #e30613; }
+    .login-card p,
+    .login-card label {
+      color: #e6f1fb !important;
+      text-shadow: 0 1px 9px #15374b28;
+    }
+    @media (max-width:600px) {
+      .login-card { padding: 1.1rem .08rem 1.2rem .08rem; border-radius: .85rem; }
+      .fotonik-logo-img { width: 100px; margin-bottom: .8rem; }
+      .portal-title { font-size: 1.05rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <!-- LOGO -->
+    <img src="/uploads/fotonik-logo.png" class="fotonik-logo-img" alt="Fotonik Logo" draggable="false"/>
+    <!-- BAŞLIK -->
+    <div class="portal-title">Personel Portalı</div>
+    <!-- FORM -->
+    <form id="loginForm" class="w-full mt-2 space-y-5">
+      <input type="email" id="email" class="fotonik-input w-full p-3 rounded mb-1" placeholder="E-posta" required>
+      <input type="password" id="password" class="fotonik-input w-full p-3 rounded" placeholder="Şifre" required>
+      <button type="submit" class="w-full fotonik-btn">Giriş Yap</button>
+    </form>
+    <p class="mt-5 text-center font-medium">
+      Hesabın yok mu?
+      <a href="register.html" class="fotonik-link">Kayıt ol</a>
+    </p>
+  </div>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const email    = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      if (!email || !password) return alert('Tüm alanları doldurun.');
+      try {
+        const res = await fetch('/api/personel/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw data;
+        localStorage.setItem('personelToken', data.token);
+        location.href = 'index.html';
+      } catch(err) {
+        alert(err.message || 'Giriş başarısız.');
+      }
+    });
+  </script>
+</body>
+</html>

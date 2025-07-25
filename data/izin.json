@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1753452436616,
+    "personelId": 1752055895654,
+    "tur": "yillik",
+    "baslangic": "2025-07-25",
+    "bitis": "2025-07-27",
+    "gun": 3,
+    "gerekce": "Sağlık Sorunu",
+    "belge": null,
+    "durum": "Onaylandı",
+    "tarih": "2025-07-25T14:07:16.616Z",
+    "onayTarihi": "2025-07-25T14:07:20.623Z"
+  },
+  {
+    "id": 1753452459713,
+    "personelId": 1752055895654,
+    "tur": "ucretsiz",
+    "baslangic": "2025-07-26",
+    "bitis": "2025-07-26",
+    "gun": 1,
+    "gerekce": "sağlık",
+    "belge": null,
+    "durum": "Beklemede",
+    "tarih": "2025-07-25T14:07:39.713Z",
+    "onaylayan": null
+  }
+]

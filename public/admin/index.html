@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fotonik Admin Paneli</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --main: #1761a0;
+      --main-dark: #134b79;
+      --accent: #25b2ef;
+      --gray: #f6f8fa;
+      --shadow: 0 6px 36px #00aeef1c;
+      --radius: 1.2rem;
+    }
+    body { background: var(--gray);}
+    .sidebar {
+      width: 250px; min-width: 180px; background: #fff;
+      border-right: 1.5px solid #e4eaf2;
+      box-shadow: 0 0 60px #1d2d4c09;
+      display: flex; flex-direction: column; z-index: 30;
+      transition: left .18s;
+    }
+    .sidebar .logo { padding: 2.1rem 0 1.2rem 0; text-align: center;}
+    .sidebar .logo img { width: 135px; margin: 0 auto;}
+    .side-menu-btn {
+      width: 100%; padding: 13px 22px; border-radius: 0.9rem;
+      font-size: 1.10rem; font-weight: 600; letter-spacing:.01em;
+      color: var(--main-dark); background: none; outline: none; border: none; margin-bottom: 7px;
+      transition: all .14s; text-align: left; display: flex; align-items: center; gap: 12px;
+    }
+    .side-menu-btn.active, .side-menu-btn:hover {
+      background: #eaf3fb;
+      color: var(--accent);
+      box-shadow: 0 2px 14px #00aeef0b;
+    }
+    .sidebar .logout-btn {
+      background: linear-gradient(90deg, #1761a0 0%, #25b2ef 100%);
+      color: #fff; font-weight: 700;
+      border-radius: 0.9rem; font-size: 1.13rem;
+      padding: .92rem 0; box-shadow: 0 2px 10px #3bb1e818;
+      margin-top: 18px;
+      border: none; outline: none; transition: all .14s;
+    }
+    .sidebar .logout-btn:hover {
+      background: linear-gradient(90deg, #25b2ef 0%, #1761a0 100%);
+      box-shadow: 0 7px 28px #0bc7e941;
+    }
+    .hamburger { display:none; position:absolute; left:18px; top:28px; z-index:50;}
+    .hamburger span {
+      display:block; width:32px; height:4px; background:var(--main-dark);
+      border-radius:3px; margin-bottom:6px; transition:.19s;}
+    .main-content { flex:1 1 0%; min-width:0; background: var(--gray);}
+    .main-inner { width:100%; max-width:1020px; margin:0 auto; padding:2.6rem 1.3rem 2.1rem 1.3rem; }
+    .page-header {
+      font-size: 2rem; font-weight: 900;
+      color: var(--main-dark); text-align: center;
+      letter-spacing:.013em; margin-bottom: 1.3rem;
+      text-shadow:0 2px 20px #7cd1ff2b;
+    }
+    .card { background:#fff; border-radius:1rem; box-shadow:var(--shadow); padding:1.5rem; margin-bottom:1rem; }
+    .btn { padding:.5rem 1rem; border-radius:.5rem; font-weight:600; transition:.2s; cursor:pointer; }
+    .btn-primary { background:var(--main); color:#fff; }
+    .btn-secondary { background:#444c59; color:#fff; }
+    .btn-danger { background:#E30613; color:#fff; }
+    .admin-duyuru-img {
+      max-width: 320px; max-height: 240px; width: 100%;
+      height: auto; object-fit: contain; border-radius: 12px;
+      margin: 12px 0 6px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      display: block;
+    }
+    #modalBackdrop { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.28); display:none; align-items:center; justify-content:center; z-index:99; }
+    @media (max-width:950px) { .main-inner{max-width:98vw;} }
+    @media (max-width:800px) {
+      .sidebar {position:fixed; left:-270px;top:0;bottom:0;height:100vh; box-shadow:0 0 60px #1d2d4c21;}
+      .sidebar.open {left:0;}
+      .hamburger {display:block;}
+      .main-inner {padding:1.1rem .19rem 1.2rem .19rem;}
+      .page-header {font-size:1.20rem;}
+      .card {padding:.9rem;}
+    }
+  </style>
+</head>
+<body class="flex min-h-screen bg-gray-50">
+
+  <!-- HAMBURGER MENU (Mobile) -->
+  <div class="hamburger" id="hamburgerBtn" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebarNav">
+    <div>
+      <div class="logo"><img src="/uploads/fotonik-logo.png" alt="Fotonik Logo"/></div>
+      <nav class="mt-2 flex flex-col gap-1 px-3">
+        <button class="side-menu-btn active" id="btnDashboard" onclick="showSection('dashboard')">📋 Dashboard</button>
+        <button class="side-menu-btn" id="btnPersonel" onclick="showSection('personelHakkinda')">👥 Personeller</button>
+        <button class="side-menu-btn" id="btnOzl" onclick="showSection('ozlukBelgeleri')">📁 Özlük Belgeleri</button>
+        <button class="side-menu-btn" id="btnIzin" onclick="showSection('izinTalepleri')">📝 İzin Talepleri</button>
+        <button class="side-menu-btn" id="btnDuyuru" onclick="showSection('duyurular')">📢 Duyurular</button>
+        <button class="side-menu-btn" id="btnCards" onclick="showSection('cards')">🗂️ Üretim Kartları</button>
+        <button class="side-menu-btn" id="btnReports" onclick="showSection('reports')">📊 Üretim Raporları</button>
+        <button class="side-menu-btn" id="btnIletisim" onclick="showSection('iletisimAdmin')">📬 İletişim</button>
+      </nav>
+    </div>
+    <div class="p-5">
+      <button class="logout-btn w-full" onclick="logout()">Çıkış Yap</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <div class="main-inner">
+      <!-- DASHBOARD -->
+      <section id="dashboard">
+        <div class="page-header">Hoş geldiniz</div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="bg-white p-6 shadow rounded-lg">
+            <p class="text-gray-500">Toplam Personel</p>
+            <p id="statToplam" class="mt-2 text-4xl font-bold text-blue-600">0</p>
+          </div>
+          <div class="bg-white p-6 shadow rounded-lg">
+            <p class="text-gray-500">Bugünkü Rapor</p>
+            <p id="statRapor" class="mt-2 text-4xl font-bold text-blue-600">—</p>
+          </div>
+          <div class="bg-white p-6 shadow rounded-lg">
+            <p class="text-gray-500">Aktif İzin Talebi</p>
+            <p id="statIzin" class="mt-2 text-4xl font-bold text-blue-600">0</p>
+          </div>
+        </div>
+      </section>
+      <!-- PERSONEL -->
+      <section id="personelHakkinda" class="hidden">
+        <div class="flex justify-between items-center mb-4">
+          <div class="page-header !mb-0 text-left">👥 Personeller</div>
+          <button onclick="openPersonelForm('ekle')" class="btn-primary btn mb-4">+ Personel Ekle</button>
+        </div>
+        <form id="personelForm" class="hidden mb-6 bg-white p-6 shadow rounded-lg">
+          <input type="hidden" id="pid">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="pAd" placeholder="Ad Soyad" class="border p-2 rounded w-full" required>
+            <input type="text" id="pEgitim" placeholder="Eğitim" class="border p-2 rounded w-full" required>
+            <input type="text" id="pGorev" placeholder="Unvan" class="border p-2 rounded w-full" required>
+            <input type="date" id="pBaslama" class="border p-2 rounded w-full" required>
+            <input type="file" id="pFoto" class="border p-2 rounded w-full md:col-span-2">
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button type="button" onclick="savePersonel()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Kaydet</button>
+            <button type="button" onclick="cancelPersonel()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">İptal</button>
+          </div>
+        </form>
+        <div id="personelList" class="space-y-4"></div>
+      </section>
+      <!-- ÖZLÜK -->
+      <section id="ozlukBelgeleri" class="hidden">
+        <div class="page-header">📁 Özlük Belgeleri</div>
+        <div class="bg-white p-4 shadow rounded mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">Personel Seç</label>
+          <select id="selPersonel" onchange="onPersonelSelect()" class="border p-2 rounded w-full">
+            <option value="">Bir personel seçin</option>
+          </select>
+        </div>
+        <form id="ozlukForm" class="hidden mb-6 bg-white p-6 shadow rounded-lg">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <select id="selTur" class="border p-2 rounded w-full">
+              <option value="">Belge Türü</option>
+              <option>Diploma</option>
+              <option>Adli Sicil Kaydı</option>
+              <option>Vesikalık</option>
+              <option>Sağlık Raporu</option>
+              <option>İkametgah</option>
+              <option>Nüfus Cüzdanı Örneği</option>
+              <option>Askerlik Durumu</option>
+            </select>
+            <input type="file" id="inpDosya" class="border p-2 rounded w-full">
+          </div>
+          <button type="button" onclick="uploadOzluk()" class="mt-4 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Yükle</button>
+        </form>
+        <div id="ozlukList" class="space-y-4"></div>
+      </section>
+      <!-- İZİN -->
+      <section id="izinTalepleri" class="hidden">
+        <div class="page-header">📝 İzin Talepleri</div>
+        <div class="flex flex-wrap gap-2 mb-3">
+          <select id="izinAy"   class="border p-1 rounded text-sm"></select>
+          <select id="izinYil"  class="border p-1 rounded text-sm"></select>
+          <select id="izinPersonel" class="border p-1 rounded text-sm"></select>
+          <select id="izinTurFilter" class="border p-1 rounded text-sm"></select>
+          <select id="izinDurumFilter" class="border p-1 rounded text-sm">
+            <option value="">Durum</option>
+            <option value="Beklemede">Beklemede</option>
+            <option value="Onaylandı">Onaylandı</option>
+            <option value="Reddedildi">Reddedildi</option>
+          </select>
+          <button onclick="downloadAylikToplamCSV()" class="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-xs ml-2">Aylık Toplam Raporu</button>
+        </div>
+        <div id="izinKarnesi" class="mb-4"></div>
+        <div class="overflow-x-auto">
+          <table class="min-w-[650px] w-full text-sm">
+            <thead>
+              <tr class="bg-[#f4f8fa] border-b">
+                <th class="p-2">Personel</th>
+                <th class="p-2">İzin Türü</th>
+                <th class="p-2">Başlangıç</th>
+                <th class="p-2">Bitiş</th>
+                <th class="p-2">Gün</th>
+                <th class="p-2">Açıklama</th>
+                <th class="p-2">Belge</th>
+                <th class="p-2">Durum</th>
+                <th class="p-2">İşlem</th>
+              </tr>
+            </thead>
+            <tbody id="izinList"></tbody>
+          </table>
+        </div>
+      </section>
+      <!-- DUYURU -->
+      <section id="duyurular" class="hidden">
+        <div class="flex justify-between items-center mb-4">
+          <div class="page-header !mb-0 text-left">📢 Duyurular</div>
+          <button id="btnOpenDuyuruForm" class="btn-primary btn mb-4">+ Yeni Duyuru Ekle</button>
+        </div>
+        <form id="duyuruForm" class="hidden mb-6 bg-white p-6 shadow rounded-lg" enctype="multipart/form-data">
+          <input type="hidden" id="duyuruId">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input type="text" id="duyuruText" placeholder="Metin" class="border p-2 rounded w-full" required>
+            <input type="file" id="duyuruImage" accept="image/*" class="border p-2 rounded w-full">
+            <input type="file" id="duyuruVideo" accept="video/*" class="border p-2 rounded w-full">
+          </div>
+          <div class="mt-4 flex gap-2">
+            <button id="btnSaveDuyuru" type="button" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded">Kaydet</button>
+            <button type="button" onclick="cancelDuyuru()" class="bg-gray-400 hover:bg-gray-500 text-white px-4 py-2 rounded">İptal</button>
+          </div>
+        </form>
+        <div id="duyuruList"></div>
+      </section>
+      <!-- ÜRETİM KARTLARI -->
+      <section id="cards" class="hidden ">
+        <div class="flex justify-between items-center mb-4">
+          <div class="page-header !mb-6 text-left">🗂️ Üretim Kartları</div>
+          <button id="btnNewCard" class="btn-primary btn mb-4">+ Yeni Kart</button>
+        </div>
+        <div id="cardList"></div>
+      </section>
+      <!-- ÜRETİM RAPORLARI -->
+      <section id="reports" class="hidden">
+        <div class="page-header">📊 Üretim Raporları</div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+          <input id="filterYear"   type="number" placeholder="Yıl" class="border p-2 rounded"/>
+          <input id="filterMonth"  type="number" placeholder="Ay" class="border p-2 rounded"/>
+          <select id="filterCard"   class="border p-2 rounded">
+            <option value="">Kart Seç</option>
+          </select>
+          <select id="filterPerson" class="border p-2 rounded">
+            <option value="">Personel Seç</option>
+          </select>
+        </div>
+        <button id="btnFetchReports" class="btn-primary btn mb-4">Raporu Getir</button>
+        <div id="reportSummary" class="mb-4 font-semibold"></div>
+        <table class="w-full text-sm border-collapse">
+          <thead>
+            <tr class="bg-gray-200">
+              <th class="border p-2">Kart</th>
+              <th class="border p-2">Personel</th>
+              <th class="border p-2">Adet</th>
+              <th class="border p-2">Süre (dk)</th>
+              <th class="border p-2">Verim (%)</th>
+              <th class="border p-2">Tarih</th>
+              <th class="border p-2">Açıklama</th>
+            </tr>
+          </thead>
+          <tbody id="reportTable"></tbody>
+        </table>
+      </section>
+      <!-- İLETİŞİM -->
+      <section id="iletisimAdmin" class="hidden">
+        <div class="page-header text-blue-1000">📬 Gelen Mesajlar</div>
+        <div id="iletisimList"></div>
+      </section>
+      <!-- MODALS -->
+      <div id="readerModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 fade-enter">
+        <div class="bg-white rounded-lg shadow-lg w-80 max-w-full p-6 fade-enter-active">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold">Okuyanlar</h3>
+            <button id="readerModalClose" class="text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
+          </div>
+          <ul id="readerList" class="space-y-2 max-h-60 overflow-y-auto text-gray-700 text-sm"></ul>
+        </div>
+      </div>
+      <div id="modalBackdrop" class="flex">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+          <h3 class="text-xl font-semibold mb-4">Yeni Üretim Kartı</h3>
+          <div class="mb-3">
+            <label class="block mb-1">Kart Adı</label>
+            <input id="newCardName" type="text" class="border p-2 rounded w-full"/>
+          </div>
+          <div class="mb-3">
+            <label class="block mb-1">Hedef Adet</label>
+            <input id="newCardTarget" type="number" class="border p-2 rounded w-full"/>
+          </div>
+          <div class="mb-4">
+            <label class="block mb-1">Açıklama</label>
+            <textarea id="newCardDesc" class="border p-2 rounded w-full"></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button id="cancelNewCard" class="btn-secondary btn">İptal</button>
+            <button id="saveNewCard"   class="btn-primary btn">Kaydet</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    function toggleSidebar(){
+  let sidebar = document.getElementById('sidebarNav');
+  sidebar.classList.toggle('open');
+  let bg = document.getElementById('sidebar-backdrop');
+  if(sidebar.classList.contains('open')) bg.style.display="block";
+  else bg.style.display="none";
+}
+function closeSidebar(){
+  let sidebar = document.getElementById('sidebarNav');
+  sidebar.classList.remove('open');
+  document.getElementById('sidebar-backdrop').style.display="none";
+}
+document.querySelectorAll('.side-menu-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    closeSidebar();
+  });
+});
+  // --- GENEL ---
+ // =============== GENEL ===============
+const token = localStorage.getItem('token');
+if (!token && !location.pathname.endsWith('/admin/login.html')) location = '/admin/login.html';
+
+const $ = id => document.getElementById(id);
+const sections = [
+  'dashboard','personelHakkinda','ozlukBelgeleri','izinTalepleri','duyurular','iletisimAdmin',
+  'cards','reports'
+];
+
+function showSection(id){
+  sections.forEach(s => { if($(s)) $(s).classList.add('hidden'); });
+  if ($(id)) $(id).classList.remove('hidden');
+  if (id==='dashboard') loadStats();
+  if (id==='duyurular') loadDuyurular();
+  if (id==='personelHakkinda') { resetPersonelForm(); loadPersoneller(); }
+  if (id==='ozlukBelgeleri') loadPersonelSelect();
+  if (id==='izinTalepleri') loadIzinTalepleri();
+  if (id==='iletisimAdmin') loadIletisimList();
+  if (id==='cards') loadCards();
+  if (id==='reports') loadReportsMeta();
+}
+function logout(){ localStorage.removeItem('token'); location = '/admin/login.html'; }
+
+// =============== DASHBOARD ===============
+async function loadStats(){
+  try {
+    const [ps, iz, uretim] = await Promise.all([
+      fetch('/api/personel',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+      fetch('/api/izin',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+      fetch('/api/uretim/istatistik',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json())
+    ]);
+    $('statToplam').textContent = ps.length;
+    $('statRapor').textContent   = uretim?.ozet?.totalReports || '—';
+    $('statIzin').textContent    = iz.filter(i=>i.durum==='Beklemede').length;
+  } catch {}
+}
+
+// =============== PERSONEL MODÜLÜ ===============
+function openPersonelForm(mode,p=null){
+  resetPersonelForm();
+  $('personelForm').classList.remove('hidden');
+  if(mode==='duzenle' && p){
+    $('pid').value      = p.id;
+    $('pAd').value      = p.ad;
+    $('pEgitim').value  = p.egitim;
+    $('pGorev').value   = p.gorev;
+    $('pBaslama').value = p.baslama;
+  }
+}
+function cancelPersonel(){ resetPersonelForm(); }
+function resetPersonelForm(){
+  $('personelForm').classList.add('hidden');
+  ['pid','pAd','pEgitim','pGorev','pBaslama','pFoto'].forEach(id=>$(id).value='');
+}
+async function loadPersoneller(){
+  const data = await fetch('/api/personel',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const out = $('personelList'); out.innerHTML = '';
+  data.forEach(p=>{
+    const d = document.createElement('div');
+    d.className = 'bg-white p-4 shadow rounded-lg flex justify-between items-center';
+    d.innerHTML = `
+      <div class="flex items-center gap-4">
+        <img src="/uploads/${p.foto||'default.png'}" class="w-16 h-16 rounded-full object-cover">
+        <div>
+          <p class="font-semibold">${p.ad}</p>
+          <p class="text-sm text-gray-500">Eğitim: ${p.egitim}</p>
+          <p class="text-sm text-gray-500">Unvan: ${p.gorev}</p>
+          <p class="text-sm text-gray-400">Başlama: ${p.baslama}</p>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button onclick='openPersonelForm("duzenle",${JSON.stringify(p)})' class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded">Düzenle</button>
+        <button onclick="deletePersonel(${p.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Sil</button>
+      </div>`;
+    out.appendChild(d);
+  });
+}
+async function savePersonel(){
+  const ad = $('pAd').value.trim(),
+        eg = $('pEgitim').value.trim(),
+        go = $('pGorev').value.trim(),
+        ba = $('pBaslama').value;
+  if(!ad||!eg||!go||!ba) return alert('Tüm alanları doldurun.');
+  const fd = new FormData();
+  fd.append('ad',ad);
+  fd.append('egitim',eg);
+  fd.append('gorev',go);
+  fd.append('baslama',ba);
+  if($('pFoto').files[0]) fd.append('foto',$('pFoto').files[0]);
+  const id = $('pid').value;
+  const res = await fetch(id?`/api/personel/${id}`:'/api/personel/add',{
+    method: id?'PUT':'POST',
+    headers:{Authorization:'Bearer '+token},
+    body: fd
+  });
+  if(!res.ok) return alert('Personel kaydedilemedi.');
+  resetPersonelForm();
+  loadPersoneller();
+  loadStats();
+}
+async function deletePersonel(id){
+  if(!confirm('Silinsin mi?')) return;
+  await fetch(`/api/personel/${id}`,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+  loadPersoneller();
+  loadStats();
+}
+
+// =============== ÖZLÜK BELGELERİ ===============
+async function loadPersonelSelect(){
+  const ps  = await fetch('/api/personel',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const sel = $('selPersonel');
+  sel.innerHTML = '<option value="">Bir personel seçin</option>';
+  ps.forEach(p=> sel.append(new Option(p.ad,p.id)));
+  $('ozlukForm').classList.add('hidden');
+  $('ozlukList').innerHTML = '';
+}
+function onPersonelSelect(){
+  if(!$('selPersonel').value){
+    $('ozlukForm').classList.add('hidden');
+    $('ozlukList').innerHTML = '';
+    return;
+  }
+  $('ozlukForm').classList.remove('hidden');
+  loadOzlukList($('selPersonel').value);
+}
+async function uploadOzluk(){
+  const pid = $('selPersonel').value,
+        tur = $('selTur').value,
+        f   = $('inpDosya').files[0];
+  if(!pid||!tur||!f) return alert('Tüm alanları doldurun.');
+  const fd = new FormData();
+  fd.append('personelId',pid);
+  fd.append('tur',tur);
+  fd.append('dosya',f);
+  const res = await fetch('/api/ozluk',{method:'POST',headers:{Authorization:'Bearer '+token},body:fd});
+  if(!res.ok) return alert('Belge yüklenemedi.');
+  loadOzlukList(pid);
+}
+async function loadOzlukList(pid){
+  const list = await fetch(`/api/ozluk/${pid}`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const out  = $('ozlukList'); out.innerHTML = '';
+  list.forEach(o=>{
+    const d = document.createElement('div');
+    d.className = 'bg-white p-4 shadow rounded-lg flex justify-between items-center';
+    d.innerHTML = `
+      <span>${o.tur}</span>
+      <div class="flex gap-2">
+        <a href="/uploads/${o.dosya}" download class="text-blue-600 hover:underline">İndir</a>
+        <button onclick="deleteOzluk(${o.id})" class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded">Sil</button>
+      </div>`;
+    out.appendChild(d);
+  });
+}
+async function deleteOzluk(id){
+  if(!confirm('Silinsin mi?')) return;
+  await fetch(`/api/ozluk/${id}`,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+  loadOzlukList($('selPersonel').value);
+}
+
+// =============== İZİN TALEPLERİ ===============
+let izinTurleri = [
+  { key: "yillik",    ad: "Yıllık Ücretli İzin", toplam: 14 },
+  { key: "ucretsiz",  ad: "Ücretsiz İzin",      toplam: 30 },
+  { key: "mazeret",   ad: "Mazeret İzni",       toplam: 7 },
+  { key: "rapor",     ad: "Sağlık Raporu",      toplam: 20 }
+];
+function fillAyYilFilters() {
+  const aylar = ["Tümü","01","02","03","04","05","06","07","08","09","10","11","12"];
+  const yilNow = new Date().getFullYear();
+  const yillar = ["Tümü"];
+  for(let y=yilNow; y>=yilNow-10; y--) yillar.push(y+"");
+  const aySel  = $('izinAy');  aySel.innerHTML = '';
+  const yilSel = $('izinYil'); yilSel.innerHTML = '';
+  aylar.forEach(a => aySel.append(new Option(a=="Tümü"?"Ay":a,a)));
+  yillar.forEach(y => yilSel.append(new Option(y=="Tümü"?"Yıl":y,y)));
+}
+function fillIzinTurleriSelect(selId, empty="Tümü", selectedKey = "") {
+  const sel = document.getElementById(selId);
+  sel.innerHTML = `<option value="">${empty}</option>`;
+  izinTurleri.forEach(tur => sel.append(new Option(tur.ad, tur.key)));
+  if (selectedKey) sel.value = selectedKey;
+}
+async function loadIzinTalepleri() {
+  const oldPer = $('izinPersonel').value;
+  const oldAy  = $('izinAy').value;
+  const oldYil = $('izinYil').value;
+  const oldTur = $('izinTurFilter').value;
+  const oldDurum = $('izinDurumFilter').value;
+
+  fillAyYilFilters();
+  fillIzinTurleriSelect("izinTurFilter", "Tümü", oldTur);
+  $('izinPersonel').value = oldPer || "";
+  $('izinAy').value = oldAy || "Tümü";
+  $('izinYil').value = oldYil || "Tümü";
+  $('izinDurumFilter').value = oldDurum || "";
+
+  const [list, ps] = await Promise.all([
+    fetch('/api/izin/all', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json()),
+    fetch('/api/personel', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json())
+  ]);
+
+  const filterAy    = $('izinAy').value;
+  const filterYil   = $('izinYil').value;
+  const filterPerId = $('izinPersonel').value;
+  const filterTur   = $('izinTurFilter').value;
+  const filterDurum = $('izinDurumFilter').value;
+
+  const perSel = $('izinPersonel');
+  if(perSel.options.length<2){
+    perSel.innerHTML = '<option value="">Personel</option>';
+    ps.forEach(p=>perSel.append(new Option(p.ad,p.id)));
+    perSel.value = filterPerId || "";
+  }
+
+  const filtered = list.filter(i=>{
+    const bas = i.baslangic || '';
+    let ay = bas.split('-')[1], yil = bas.split('-')[0];
+    return (!filterAy || filterAy=="Tümü" || ay==filterAy) &&
+          (!filterYil|| filterYil=="Tümü"|| yil==filterYil) &&
+          (!filterPerId || String(i.personelId)===String(filterPerId)) &&
+          (!filterTur || i.tur==filterTur) &&
+          (!filterDurum || i.durum==filterDurum);
+  });
+
+  if(filterPerId){
+    const secili = ps.find(p=>String(p.id)===String(filterPerId));
+    const kalanlar = await fetch('/api/izin/kalan/' + filterPerId, {
+      headers: { Authorization: 'Bearer ' + token }
+    }).then(r=>r.json());
+    let karnem = `<div class="bg-blue-50 p-3 rounded mb-3"><b>${secili ? secili.ad : ''} - Kalan Haklar:</b> `;
+    izinTurleri.forEach(tur => {
+      let kalan = kalanlar[tur.ad] !== undefined ? kalanlar[tur.ad] : tur.toplam;
+      karnem += `<span class="mx-2">${tur.ad}: <b class="text-blue-800">${kalan}</b> gün</span>`;
+    });
+    karnem += "</div>";
+    $('izinKarnesi').innerHTML = karnem;
+  } else {
+    $('izinKarnesi').innerHTML = '';
+  }
+
+  const cont = $('izinList'); cont.innerHTML = '';
+  filtered.forEach(i=>{
+    const person = ps.find(p=>String(p.id)===String(i.personelId));
+    const tur = izinTurleri.find(t=>t.key==i.tur);
+    cont.innerHTML += `
+      <tr class="border-b hover:bg-gray-50">
+        <td class="p-2">${person?person.ad:'-'}</td>
+        <td class="p-2">${tur?tur.ad:i.tur}</td>
+        <td class="p-2">${i.baslangic||'-'}</td>
+        <td class="p-2">${i.bitis||'-'}</td>
+        <td class="p-2">${i.gun||'-'}</td>
+        <td class="p-2">${i.gerekce||'-'}</td>
+        <td class="p-2">${i.belge?`<a href="/uploads/${i.belge}" target="_blank" class="underline text-blue-600">Görüntüle</a>`:'-'}</td>
+        <td class="p-2 font-bold ${i.durum==='Onaylandı'?'text-green-600':i.durum==='Reddedildi'?'text-red-600':'text-yellow-600'}">${i.durum||'-'}</td>
+        <td class="p-2 flex gap-1">
+          ${i.durum==='Beklemede' ?
+            `<button onclick="updateIzin(${i.id},'Onaylandı')" class="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded text-xs">Onayla</button>
+            <button onclick="updateIzin(${i.id},'Reddedildi')" class="bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs">Reddet</button>` : '-'}
+        </td>
+      </tr>
+    `;
+  });
+}
+async function updateIzin(id, durum) {
+  await fetch(`/api/izin/${id}`, {
+    method:'PUT',
+    headers: {'Content-Type':'application/json', Authorization: 'Bearer ' + token },
+    body: JSON.stringify({ durum })
+  });
+  loadIzinTalepleri();
+}
+function downloadAylikToplamCSV() {
+  let csv = '\uFEFFPersonel;Yıl;Ay;İzin Türü;Gün\n';
+  let toplamGun = 0;
+  document.querySelectorAll("#izinList tr").forEach(tr => {
+    let tds = tr.querySelectorAll("td");
+    if (tds.length < 5) return;
+    let personel = tds[0].innerText.trim();
+    let tur      = tds[1].innerText.trim();
+    let baslangic= tds[2].innerText.trim();
+    let gun      = tds[4].innerText.trim();
+    if(!personel || !tur || !baslangic || !gun) return;
+    let [yil, ay] = baslangic.split('-');
+    csv += `${personel};${yil};${ay};${tur};${gun}\n`;
+    let g = parseInt(gun);
+    if (!isNaN(g)) toplamGun += g;
+  });
+  csv += `;;;;Toplam Kullanılan İzin;${toplamGun}\n`;
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "aylik-izin-raporu.csv";
+  a.click();
+}
+$('izinAy').addEventListener('change',loadIzinTalepleri);
+$('izinYil').addEventListener('change',loadIzinTalepleri);
+$('izinPersonel').addEventListener('change',loadIzinTalepleri);
+$('izinTurFilter').addEventListener('change',loadIzinTalepleri);
+$('izinDurumFilter').addEventListener('change',loadIzinTalepleri);
+window.addEventListener('DOMContentLoaded', loadIzinTalepleri);
+
+// =============== İLETİŞİM MODÜLÜ ===============
+async function loadIletisimList() {
+  const list = await fetch('/api/iletisim', {headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const out = document.getElementById('iletisimList'); out.innerHTML='';
+  if (!list.length) { out.innerHTML = "<p>Henüz mesaj yok.</p>"; return; }
+  list.forEach(msg=>{
+    out.innerHTML += `
+      <div class="bg-white shadow rounded p-4 mb-3 border-l-4 ${msg.tur==='Şikayet'?'border-red-500':msg.tur==='Öneri'?'border-blue-500':'border-gray-400'}">
+        <span class="font-bold">${msg.tur}</span>
+        <span class="float-right text-xs text-gray-500">${new Date(msg.tarih).toLocaleString()}</span>
+        <p class="mt-1">${msg.mesaj.replace(/\n/g,"<br>")}</p>
+        <div class="flex gap-2 mt-2">
+          ${!msg.okundu?`<button onclick="okunduYap(${msg.id})" class="bg-green-500 text-white px-3 py-1 rounded text-xs">Okundu</button>`:''}
+          <button onclick="silIletisim(${msg.id})" class="bg-red-500 text-white px-3 py-1 rounded text-xs">Sil</button>
+        </div>
+      </div>`;
+  });
+}
+async function okunduYap(id){
+  await fetch('/api/iletisim/'+id+'/okundu',{method:'PUT',headers:{Authorization:'Bearer '+token}});
+  loadIletisimList();
+}
+async function silIletisim(id){
+  if(confirm("Silinsin mi?")) {
+    await fetch('/api/iletisim/'+id,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+    loadIletisimList();
+  }
+}
+
+// =============== DUYURULAR ===============
+function openDuyuruForm(mode,d){
+  const f = $('duyuruForm');
+  f.classList.remove('hidden');
+  if (mode==='duzenle'){
+    $('duyuruId').value = d.id;
+    $('duyuruText').value = d.text;
+  } else {
+    ['duyuruId','duyuruText','duyuruImage','duyuruVideo'].forEach(id=>$(id).value='');
+  }
+}
+function cancelDuyuru(){
+  $('duyuruForm').classList.add('hidden');
+  ['duyuruId','duyuruText','duyuruImage','duyuruVideo'].forEach(id=>$(id).value='');
+}
+async function loadDuyurular(){
+  const list = await fetch('/api/duyurular',{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const out = $('duyuruList'); out.innerHTML='';
+  list.forEach(d=>{
+    const div = document.createElement('div');
+    div.className='bg-white p-4 shadow rounded-lg space-y-2';
+    div.innerHTML=`
+      <p class="font-semibold">${d.text}</p>
+      ${d.image?`<img src="/uploads/${d.image}" class="admin-duyuru-img" alt="Duyuru Görseli"/>`:``}
+      ${d.video?`<video src="/uploads/${d.video}" controls class="w-full rounded"></video>`:``}
+      <p class="text-gray-400 text-xs">${new Date(d.createdAt).toLocaleString()}</p>
+      <div class="flex gap-2">
+        <button class="bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-1 rounded"
+                onclick='openDuyuruForm("duzenle",${JSON.stringify(d)})'>Düzenle</button>
+        <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                onclick="deleteDuyuru(${d.id})">Sil</button>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded"
+                onclick="showReaders(${d.id})">Okuyanlar</button>
+      </div>`;
+    out.appendChild(div);
+  });
+}
+async function saveDuyuru(){
+  const id = $('duyuruId').value, text=$('duyuruText').value.trim();
+  if(!text) return alert('Metin zorunlu.');
+  const fd=new FormData(); fd.append('text',text);
+  const img=$('duyuruImage').files[0], vid=$('duyuruVideo').files[0];
+  if(img) fd.append('image',img); if(vid) fd.append('video',vid);
+  const url = id?`/api/duyurular/${id}`:'/api/duyurular';
+  const res = await fetch(url,{method:id?'PUT':'POST',headers:{Authorization:'Bearer '+token},body:fd});
+  if(!res.ok){ const err=await res.json().catch(_=>({message:res.statusText})); return alert(`Hata (${res.status}): ${err.message}`);}
+  cancelDuyuru(); loadDuyurular();
+}
+async function deleteDuyuru(id){
+  if(!confirm('Silinsin mi?'))return;
+  await fetch(`/api/duyurular/${id}`,{method:'DELETE',headers:{Authorization:'Bearer '+token}});
+  loadDuyurular();
+}
+const readerModal      = $('readerModal');
+const readerListEl     = $('readerList');
+const readerModalClose = $('readerModalClose');
+readerModalClose.addEventListener('click',()=>readerModal.classList.add('hidden'));
+readerModal.addEventListener('click',e=>{ if(e.target===readerModal) readerModal.classList.add('hidden'); });
+async function showReaders(duyuruId){
+  const readers = await fetch(`/api/duyurular/${duyuruId}/readers`,{headers:{Authorization:'Bearer '+token}}).then(r=>r.json());
+  const valid = readers.filter(r => r && r.ad && r.soyad);
+  if(!valid.length) return alert('Henüz okunmamış.');
+  readerListEl.innerHTML = '';
+  valid.forEach(r=>{
+    const isim = `${r.ad} ${r.soyad}`.trim();
+    const date = new Date(r.date).toLocaleString();
+    const li = document.createElement('li');
+    li.className = 'flex justify-between';
+    li.innerHTML = `<span>${isim}</span><span class="text-gray-500 text-xs">${date}</span>`;
+    readerListEl.appendChild(li);
+  });
+  readerModal.classList.remove('hidden','fade-leave','fade-leave-active');
+  readerModal.classList.add('fade-enter');
+  setTimeout(()=>readerModal.classList.add('fade-enter-active'),10);
+}
+$('btnOpenDuyuruForm').addEventListener('click',()=>openDuyuruForm('ekle'));
+$('btnSaveDuyuru').addEventListener('click',saveDuyuru);
+
+// =============== ÜRETİM KARTLARI MODÜLÜ ===============
+async function loadCards(){
+  const res = await fetch('/api/uretim/kartlar',{ headers:{ Authorization:`Bearer ${token}` }});
+  const cards = res.ok?await res.json():[];
+  const out = document.getElementById('cardList');
+  out.innerHTML = '';
+  cards.forEach(k=>{
+    const div = document.createElement('div');
+    div.className = 'card flex justify-between items-center';
+    div.innerHTML = `
+      <div>
+        <p class="font-semibold">${k.ad}</p>
+        <p class="text-sm text-gray-600">
+          Hedef: ${k.hedef} | Üretildi: ${k.topAdet||0} | Kalan: ${k.kalan||k.hedef}
+        </p>
+        <p class="text-sm">${k.aciklama||'–'}</p>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="toggleCard('${k.id}')" class="btn-secondary btn">
+          ${k.aktif? 'Pasif Yap':'Aktif Yap'}
+        </button>
+        <button onclick="completeCard('${k.id}')"
+        class="btn-${k.tamamlandi?'secondary':'primary'} btn">
+        ${k.tamamlandi? 'Yeniden Aç':'Tamamla'}
+        </button>
+        <button onclick="deleteCard('${k.id}')" class="btn-danger btn">Sil</button>
+      </div>`;
+    out.appendChild(div);
+  });
+}
+window.toggleCard = async id => {
+  await fetch(`/api/uretim/kart/${id}/durum`,{ method:'POST', headers:{ Authorization:`Bearer ${token}` }});
+  loadCards();
+};
+window.completeCard = async id => {
+  await fetch(`/api/uretim/kart/${id}/tamamla`,{ method:'POST', headers:{ Authorization:`Bearer ${token}` }});
+  loadCards();
+};
+window.deleteCard = async id => {
+  if(!confirm('Silmek istediğinize emin misiniz?')) return;
+  await fetch(`/api/uretim/kart/${id}`,{ method:'DELETE', headers:{ Authorization:`Bearer ${token}` }});
+  loadCards();
+};
+const mb = $('modalBackdrop');
+$('btnNewCard').onclick     = ()=> mb.style.display='flex';
+$('cancelNewCard').onclick  = ()=> mb.style.display='none';
+$('saveNewCard').onclick    = async ()=>{
+  const ad        = $('newCardName').value.trim();
+  const hedef     = $('newCardTarget').value;
+  const aciklama  = $('newCardDesc').value.trim();
+  if(!ad||!hedef) return alert('Ad ve hedef girin');
+  await fetch('/api/uretim/kart',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      Authorization:`Bearer ${token}`
+    },
+    body: JSON.stringify({ ad, hedef, aciklama })
+  });
+  mb.style.display='none';
+  loadCards();
+};
+
+// =============== ÜRETİM RAPORLARI MODÜLÜ ===============
+async function loadReportsMeta(){
+  const [kcRes, rkRes, authRes] = await Promise.all([
+    fetch('/api/uretim/kartlar',{ headers:{ Authorization:`Bearer ${token}` }}),
+    fetch('/api/uretim/raporlar/kartlar',{ headers:{ Authorization:`Bearer ${token}` }}),
+    fetch('/api/personel',{ headers:{ Authorization:`Bearer ${token}` }})
+  ]);
+  const cards    = kcRes.ok?await kcRes.json():[];
+  const rapCards = rkRes.ok?await rkRes.json():[];
+  const persons  = authRes.ok?await authRes.json():[];
+  const selCard = $('filterCard');
+  selCard.innerHTML = '<option value="">Kart Seç</option>';
+  const seen = new Set();
+  cards.concat(rapCards).forEach(c=>{
+    if(!seen.has(c.id)){
+      selCard.innerHTML += `<option value="${c.id}">${c.ad}</option>`;
+      seen.add(c.id);
+    }
+  });
+  const selPer = $('filterPerson');
+  selPer.innerHTML = '<option value="">Personel Seç</option>';
+  persons.forEach(p=>{
+    selPer.innerHTML += `<option value="${p.id}">${p.ad||p.soyad}</option>`;
+  });
+}
+$('btnFetchReports').onclick = async ()=>{
+  const yil        = $('filterYear').value;
+  const ay         = $('filterMonth').value;
+  const kartId     = $('filterCard').value;
+  const personelId = $('filterPerson').value;
+  const params     = new URLSearchParams({ yil, ay, kartId, personelId });
+  const res = await fetch(`/api/uretim/istatistik?${params}`,{
+    headers:{ Authorization:`Bearer ${token}` }
+  });
+  if(!res.ok) return alert('Rapor alınamadı');
+  const { ozet, detay } = await res.json();
+  $('reportSummary').innerText =
+    `Toplam Adet: ${ozet.topAdet} | Toplam Süre: ${ozet.topSure} dk`;
+  const tbody = $('reportTable');
+  tbody.innerHTML = '';
+  detay.forEach(r=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="border p-2">${r.kartAd}</td>
+      <td class="border p-2">${r.personelAd}</td>
+      <td class="border p-2">${r.adet}</td>
+      <td class="border p-2">${r.sure}</td>
+      <td class="border p-2">${r.verim}</td>
+      <td class="border p-2">${new Date(r.tarih).toLocaleString()}</td>
+      <td class="border p-2">${r.aciklama||'–'}</td>`;
+    tbody.appendChild(tr);
+  });
+};
+
+showSection('dashboard');
+
+  </script>
+  </body>
+  </html>
