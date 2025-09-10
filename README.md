@@ -48,8 +48,7 @@ Personel Girişi:
 http://localhost:3000/personel
 Admin Girişi:
 http://localhost:3000/
-//ekran görüntüleri           
-![Personel](./docs/personel-mobil.png) | ![Admin](./docs/admin-desktop.png) 
+
 
 Katkı ve Lisans
 Kod tamamen geliştiriciye aittir, isteğe göre uyarlanabilir.
