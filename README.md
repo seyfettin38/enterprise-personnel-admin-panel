@@ -20,7 +20,7 @@ Hem personel tarafı hem de admin paneli içerir. Tamamen responsive (mobil uyum
   - Üretim raporları ve verimlilik analizi
   - Duyuru ekleme, görsel/video ile paylaşım
   - İletişim kutusu (görüş/öneri/şikayet okuma)
-  - 
+    
  - **Güvenlik:**
   - JWT tabanlı kimlik doğrulama
   - Yetki kontrolleri (personel/admin)
